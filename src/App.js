@@ -1,8 +1,8 @@
 /* global __app_id, __firebase_config, __initial_auth_token */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, doc, setDoc, updateDoc, onSnapshot, collection, query, where, addDoc, getDocs } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, updateDoc, onSnapshot, collection } from 'firebase/firestore';
 
 // Ensure these global variables are defined by the environment
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -24,7 +24,6 @@ const showMessage = (message, type = 'info') => {
 
 const App = () => {
     const [db, setDb] = useState(null);
-    const [auth, setAuth] = useState(null);
     const [userId, setUserId] = useState(null);
     const [isAuthReady, setIsAuthReady] = useState(false);
     const [currentPage, setCurrentPage] = useState('home'); // 'home' or 'unitView'
@@ -39,7 +38,6 @@ const App = () => {
             const authentication = getAuth(app);
 
             setDb(firestore);
-            setAuth(authentication);
 
             const unsubscribe = onAuthStateChanged(authentication, async (user) => {
                 if (user) {
@@ -97,7 +95,7 @@ const App = () => {
 
             return () => unsubscribe();
         }
-    }, [isAuthReady, db, userId]);
+    }, [isAuthReady, userId]); // Removed 'db' from dependencies
 
     const handleUnitClick = (unitId) => {
         setSelectedUnitId(unitId);
